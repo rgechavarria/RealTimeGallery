@@ -7,7 +7,7 @@ namespace GalleryApp.Core
 {
     public class PhotoUploader
     {
-        private const string UploadUrl = "http://192.168.1.103/api/photo";
+		private const string UploadUrl = "http://tw-away-day2013.azurewebsites.net/api/photo";
 
         public async Task UploadPhoto(byte[] photoBytes, string fileExtention)
         {
