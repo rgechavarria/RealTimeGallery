@@ -67,5 +67,9 @@
       <Project>{95E22BA7-D2D0-452F-B1C4-03E1B549C41E}</Project>
       <Name>GalleryApp.Core.Android</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SmartImageView\SmartImageView.csproj">
+      <Project>{47E70137-19C4-43DE-88A0-713B42781D86}</Project>
+      <Name>SmartImageView</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

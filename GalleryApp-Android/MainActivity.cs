@@ -6,6 +6,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using GalleryApp.Core;
+using LoopJ;
+
 
 namespace GalleryAppAndroid
 {
@@ -21,20 +23,20 @@ namespace GalleryAppAndroid
 
 			SetContentView (Resource.Layout.Main);		
 			Button button = FindViewById<Button> (Resource.Id.myButton);
+			SmartImageView imageView = FindViewById<SmartImageView> (Resource.Id.image);
+			imageView.SetImageUrl ("http://cdn1.xamarin.com/webimages/images/index/icon-cross-platform.png");
+
 
 			_uploader = new PhotoUploader ();
 			_listener = new PhotoListener ();
 
-			button.Click += delegate {
-				UploadPicture();
-			};
-
 			_listener.NewPhotosReceived += (sender, urls) =>
 			{
 				RunOnUiThread(() =>
-				{
+				              {
 					foreach (var url in urls)
 					{
+						imageView.SetImageUrl(url);
 						var toast = Toast.MakeText(BaseContext,"New Image: "+url.ToString(),ToastLength.Long);
 						toast.Show();
 					}
@@ -42,6 +44,11 @@ namespace GalleryAppAndroid
 			};
 
 			_listener.StartListening ();
+
+			button.Click += delegate {
+				UploadPicture();
+			};
+
 		}
 
 		private void UploadPicture ()
