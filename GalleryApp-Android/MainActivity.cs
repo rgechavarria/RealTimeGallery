@@ -5,8 +5,11 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics;
 using GalleryApp.Core;
+using Java.IO;
 using LoopJ;
+using System.IO;
 
 
 namespace GalleryAppAndroid
@@ -14,8 +17,10 @@ namespace GalleryAppAndroid
 	[Activity (Label = "GalleryApp-Android", MainLauncher = true)]
 	public class Activity1 : Activity
 	{
+		private readonly int PICK_IMAGE_GALLERY = 1;
 		private PhotoUploader _uploader;
 		private PhotoListener _listener;
+		private SmartImageView imageView;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -23,7 +28,7 @@ namespace GalleryAppAndroid
 
 			SetContentView (Resource.Layout.Main);		
 			Button button = FindViewById<Button> (Resource.Id.myButton);
-			SmartImageView imageView = FindViewById<SmartImageView> (Resource.Id.image);
+			imageView = FindViewById<SmartImageView> (Resource.Id.image);
 			imageView.SetImageUrl ("http://cdn1.xamarin.com/webimages/images/index/icon-cross-platform.png");
 
 
@@ -51,10 +56,27 @@ namespace GalleryAppAndroid
 
 		}
 
+		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
+		{
+			base.OnActivityResult (requestCode, resultCode, data);
+			if (resultCode == Result.Ok)
+			{
+				var targetUri = data.Data;
+				var stream = ContentResolver.OpenInputStream(targetUri);
+				using(MemoryStream memoryStream = new MemoryStream())
+				{
+					stream.CopyTo(memoryStream);
+					byte[] photoBytes = memoryStream.ToArray();
+					_uploader.UploadPhoto(photoBytes,"jpg");
+				}
+				
+			}
+		}
+
 		private void UploadPicture ()
 		{
-			var toast = Toast.MakeText (BaseContext, "Select from gallery not implemented yet", ToastLength.Short);
-			toast.Show ();
+			var galleryIntent = new Intent (Intent.ActionPick, Android.Provider.MediaStore.Images.Media.ExternalContentUri);
+			StartActivityForResult(galleryIntent,PICK_IMAGE_GALLERY);			
 		}
 	}
 }
